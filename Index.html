@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canvas App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas class="newone" id="myCanvas" width="600" height="400"></canvas>
+  <button class="newone" id="hitButton">Hit</button>
+  <button class="newone" id="resetButton">Reset</button>
+
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Module 1: Draw circle and arrow
+    const circleX = 100;
+    const circleY = canvas.height / 2;
+    const circleRadius = 50;
+    const arrowX = canvas.width - circleX;
+    const arrowY = circleY;
+    const arrowSize = 50;
+
+    function drawCircle() {
+      ctx.beginPath();
+      ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2);
+      ctx.fillStyle = getRandomColor();
+      ctx.fill();
+      ctx.closePath();
+    }
+
+    function drawArrow() {
+      ctx.beginPath();
+      ctx.moveTo(arrowX, arrowY);
+      ctx.lineTo(arrowX - arrowSize, arrowY - arrowSize);
+      ctx.lineTo(arrowX - arrowSize, arrowY + arrowSize);
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    function getRandomColor() {
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+      return `rgb(${r},${g},${b})`;
+    }
+
+    drawCircle();
+    drawArrow();
+
+    // Module 2: Hit and Reset
+    const hitButton = document.getElementById('hitButton');
+    const resetButton = document.getElementById('resetButton');
+    let arrowSpeed = 5;
+    let arrowPosition = arrowX;
+    let isHit = false;
+
+    hitButton.addEventListener('click', () => {
+      if (!isHit) {
+        const interval = setInterval(() => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          drawCircle();
+          drawArrow();
+          ctx.beginPath();
+          ctx.moveTo(arrowPosition, arrowY);
+          ctx.lineTo(arrowPosition - arrowSpeed, arrowY);
+          ctx.stroke();
+          arrowPosition -= arrowSpeed;
+          if (arrowPosition < circleX + circleRadius) {
+            clearInterval(interval);
+            isHit = true;
+            ctx.fillStyle = getRandomColor();
+            ctx.fill();
+          }
+        }, 10);
+      }
+    });
+
+    resetButton.addEventListener('click', () => {
+      arrowPosition = arrowX;
+      isHit = false;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawCircle();
+      drawArrow();
+    });
+  </script>
+</body>
+</html>
